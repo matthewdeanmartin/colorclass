@@ -1,4 +1,4 @@
-#colorclass
+# colorclass
 
 Yet another ANSI color text library for Python. Provides "auto colors" for dark/light terminals. Works on Linux, OS X,
 and Windows. For Windows support you just need to call ``Windows.enable()`` in your application.
@@ -12,18 +12,6 @@ In Python2.x this library subclasses ``unicode``, while on Python3.x it subclass
 
 * Python 2.6, 2.7, PyPy, PyPy3, 3.3, 3.4, and 3.5 supported on Linux and OS X.
 * Python 2.6, 2.7, 3.3, 3.4, and 3.5 supported on Windows (both 32 and 64 bit versions of Python).
-
-.. image:: https://img.shields.io/coveralls/Robpol86/colorclass/master.svg?style=flat-square&label=Coveralls
-    :target: https://coveralls.io/github/Robpol86/colorclass
-    :alt: Coverage Status
-
-.. image:: https://img.shields.io/pypi/v/colorclass.svg?style=flat-square&label=Latest
-    :target: https://pypi.python.org/pypi/colorclass
-    :alt: Latest Version
-
-.. image:: https://img.shields.io/pypi/dm/colorclass.svg?style=flat-square&label=PyPI%20Downloads
-    :target: https://pypi.python.org/pypi/colorclass
-    :alt: Downloads
 
 ## Quickstart
 Install:
@@ -51,8 +39,7 @@ Export these environment variables as "true" to enable/disable some features:
     COLOR_DARK      Use dark colored text for light backgrounds.
     =============== ============================================
 
-# Example Implementation
-======================
+## Example Implementation
 
 ![Example Script Screenshot](https://github.com/Robpol86/colorclass/raw/master/example.png?raw=true)
 

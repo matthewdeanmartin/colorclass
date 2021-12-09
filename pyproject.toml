@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "colorclass"
-version = "2.2.0"
+version = "2.2.2"
 description = "Colorful worry-free console applications for Linux, Mac OS X, and Windows."
 authors = [
     "Robpol86 <robpol86@gmail.com>",
