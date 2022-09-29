@@ -2,9 +2,9 @@
 
 import sys
 try:
-    from collections import Mapping
-except ImportError:
     from collections.abc import Mapping
+except ImportError:
+    from collections import Mapping
 
 BASE_CODES = {
     '/all': 0, 'b': 1, 'f': 2, 'i': 3, 'u': 4, 'flash': 5, 'outline': 6, 'negative': 7, 'invis': 8, 'strike': 9,
