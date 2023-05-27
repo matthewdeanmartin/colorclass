@@ -74,13 +74,14 @@ bandit: .build_history/bandit
 .PHONY: pylint
 .build_history/pylint: .build_history .build_history/isort .build_history/black $(FILES)
 	@echo "Linting with pylint"
+	# TODO lint tests
 	$(VENV) pylint colorclass --fail-under 10
 	@touch .build_history/pylint
 
 .PHONY: ruff
 .build_history/ruff: .build_history .build_history/isort .build_history/black $(FILES)
 	@echo "Linting with ruff"
-	$(VENV) ruff colorclass
+	$(VENV) ruff colorclass tests
 	@touch .build_history/ruff
 
 .PHONY: ruff

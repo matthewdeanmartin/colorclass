@@ -336,7 +336,7 @@ def test_windows_replace_streams(monkeypatch, tmpdir, valid):
     :param tmpdir: pytest fixture.
     :param str valid: Which mock stream(s) should be valid.
     """
-    ac = list()  # atexit called.
+    ac = []  # atexit called.
     mock_sys = MockSys(
         stderr=tmpdir.join("stderr").open(mode="wb"),
         stdout=tmpdir.join("stdout").open(mode="wb"),

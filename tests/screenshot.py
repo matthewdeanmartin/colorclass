@@ -99,7 +99,7 @@ class RunNewConsole(object):
         )
         self.process_info = ProcessInfo()
         self.command_str = subprocess.list2cmdline(command).encode("ascii")
-        self._handles = list()
+        self._handles = []
         self._kernel32 = ctypes.LibraryLoader(ctypes.WinDLL).kernel32
         self._kernel32.GetExitCodeProcess.argtypes = [
             ctypes.c_void_p,

@@ -29,7 +29,7 @@ from colorclass import disable_all_colors, enable_all_colors, is_enabled
 from colorclass import set_dark_background, set_light_background
 from colorclass import Windows
 
-OPTIONS = docopt(__doc__) if __name__ == "__main__" else dict()
+OPTIONS = docopt(__doc__) if __name__ == "__main__" else {}
 
 
 def main():

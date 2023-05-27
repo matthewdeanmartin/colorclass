@@ -438,7 +438,7 @@ def test_empty(kind):
         assert instance.rindex("t")
     assert_both(instance.rjust(5), "     ", "\033[39m     ")
     if kind in ("str", "ColorStr plain"):
-        assert instance.splitlines() == list()
+        assert instance.splitlines() == []
     else:
         assert instance.splitlines() == ["\033[39m"]
     assert instance.startswith("") is True
