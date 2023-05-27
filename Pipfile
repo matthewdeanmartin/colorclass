@@ -6,8 +6,18 @@ name = "pypi"
 [packages]
 
 [dev-packages]
+pytest-cov = "*"
 pytest = "*"
 vermin = "*"
+tox = "*"
+isort = "*"
+bandit = "*"
+black = "*"
+pylint = "*"
+ruff = "*"
+mypy = "*"
+pillow = "*"
+pre-commit = "*"
 
 [requires]
 python_version = "3.10"

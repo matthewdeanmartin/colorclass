@@ -11,7 +11,7 @@ def build_color_index(ansi_string):
     :return: Position of visible characters in color string (indexes match non-color string).
     :rtype: tuple
     """
-    mapping = list()
+    mapping = []
     color_offset = 0
     for item in (i for i in RE_SPLIT.split(ansi_string) if i):
         if RE_SPLIT.match(item):
@@ -32,7 +32,7 @@ def find_char_color(ansi_string, pos):
     :return: Character along with all surrounding color codes.
     :rtype: str
     """
-    result = list()
+    result = []
     position = 0  # Set to None when character is found.
     for item in (i for i in RE_SPLIT.split(ansi_string) if i):
         if RE_SPLIT.match(item):
@@ -46,4 +46,4 @@ def find_char_color(ansi_string, pos):
                     position = None
                     break
                 position += 1
-    return ''.join(result)
+    return "".join(result)

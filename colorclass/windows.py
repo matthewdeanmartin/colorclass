@@ -7,35 +7,83 @@ import ctypes
 import re
 import sys
 
-from colorclass.codes import ANSICodeMapping, BASE_CODES
+from colorclass.codes import BASE_CODES, ANSICodeMapping
 from colorclass.core import RE_SPLIT
 
 ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004
 INVALID_HANDLE_VALUE = -1
-IS_WINDOWS = sys.platform == 'win32'
-RE_NUMBER_SEARCH = re.compile(r'\033\[([\d;]+)m')
+IS_WINDOWS = sys.platform == "win32"
+RE_NUMBER_SEARCH = re.compile(r"\033\[([\d;]+)m")
 STD_ERROR_HANDLE = -12
 STD_OUTPUT_HANDLE = -11
 WINDOWS_CODES = {
-    '/all': -33, '/fg': -39, '/bg': -49,
-
-    'black': 0, 'red': 4, 'green': 2, 'yellow': 6, 'blue': 1, 'magenta': 5, 'cyan': 3, 'white': 7,
-
-    'bgblack': -8, 'bgred': 64, 'bggreen': 32, 'bgyellow': 96, 'bgblue': 16, 'bgmagenta': 80, 'bgcyan': 48,
-    'bgwhite': 112,
-
-    'hiblack': 8, 'hired': 12, 'higreen': 10, 'hiyellow': 14, 'hiblue': 9, 'himagenta': 13, 'hicyan': 11, 'hiwhite': 15,
-
-    'hibgblack': 128, 'hibgred': 192, 'hibggreen': 160, 'hibgyellow': 224, 'hibgblue': 144, 'hibgmagenta': 208,
-    'hibgcyan': 176, 'hibgwhite': 240,
-
-    '/black': -39, '/red': -39, '/green': -39, '/yellow': -39, '/blue': -39, '/magenta': -39, '/cyan': -39,
-    '/white': -39, '/hiblack': -39, '/hired': -39, '/higreen': -39, '/hiyellow': -39, '/hiblue': -39, '/himagenta': -39,
-    '/hicyan': -39, '/hiwhite': -39,
-
-    '/bgblack': -49, '/bgred': -49, '/bggreen': -49, '/bgyellow': -49, '/bgblue': -49, '/bgmagenta': -49,
-    '/bgcyan': -49, '/bgwhite': -49, '/hibgblack': -49, '/hibgred': -49, '/hibggreen': -49, '/hibgyellow': -49,
-    '/hibgblue': -49, '/hibgmagenta': -49, '/hibgcyan': -49, '/hibgwhite': -49,
+    "/all": -33,
+    "/fg": -39,
+    "/bg": -49,
+    "black": 0,
+    "red": 4,
+    "green": 2,
+    "yellow": 6,
+    "blue": 1,
+    "magenta": 5,
+    "cyan": 3,
+    "white": 7,
+    "bgblack": -8,
+    "bgred": 64,
+    "bggreen": 32,
+    "bgyellow": 96,
+    "bgblue": 16,
+    "bgmagenta": 80,
+    "bgcyan": 48,
+    "bgwhite": 112,
+    "hiblack": 8,
+    "hired": 12,
+    "higreen": 10,
+    "hiyellow": 14,
+    "hiblue": 9,
+    "himagenta": 13,
+    "hicyan": 11,
+    "hiwhite": 15,
+    "hibgblack": 128,
+    "hibgred": 192,
+    "hibggreen": 160,
+    "hibgyellow": 224,
+    "hibgblue": 144,
+    "hibgmagenta": 208,
+    "hibgcyan": 176,
+    "hibgwhite": 240,
+    "/black": -39,
+    "/red": -39,
+    "/green": -39,
+    "/yellow": -39,
+    "/blue": -39,
+    "/magenta": -39,
+    "/cyan": -39,
+    "/white": -39,
+    "/hiblack": -39,
+    "/hired": -39,
+    "/higreen": -39,
+    "/hiyellow": -39,
+    "/hiblue": -39,
+    "/himagenta": -39,
+    "/hicyan": -39,
+    "/hiwhite": -39,
+    "/bgblack": -49,
+    "/bgred": -49,
+    "/bggreen": -49,
+    "/bgyellow": -49,
+    "/bgblue": -49,
+    "/bgmagenta": -49,
+    "/bgcyan": -49,
+    "/bgwhite": -49,
+    "/hibgblack": -49,
+    "/hibgred": -49,
+    "/hibggreen": -49,
+    "/hibgyellow": -49,
+    "/hibgblue": -49,
+    "/hibgmagenta": -49,
+    "/hibgcyan": -49,
+    "/hibgwhite": -49,
 }
 
 
@@ -43,8 +91,8 @@ class COORD(ctypes.Structure):
     """COORD structure. http://msdn.microsoft.com/en-us/library/windows/desktop/ms682119."""
 
     _fields_ = [
-        ('X', ctypes.c_short),
-        ('Y', ctypes.c_short),
+        ("X", ctypes.c_short),
+        ("Y", ctypes.c_short),
     ]
 
 
@@ -52,10 +100,10 @@ class SmallRECT(ctypes.Structure):
     """SMALL_RECT structure. http://msdn.microsoft.com/en-us/library/windows/desktop/ms686311."""
 
     _fields_ = [
-        ('Left', ctypes.c_short),
-        ('Top', ctypes.c_short),
-        ('Right', ctypes.c_short),
-        ('Bottom', ctypes.c_short),
+        ("Left", ctypes.c_short),
+        ("Top", ctypes.c_short),
+        ("Right", ctypes.c_short),
+        ("Bottom", ctypes.c_short),
     ]
 
 
@@ -63,11 +111,11 @@ class ConsoleScreenBufferInfo(ctypes.Structure):
     """CONSOLE_SCREEN_BUFFER_INFO structure. http://msdn.microsoft.com/en-us/library/windows/desktop/ms682093."""
 
     _fields_ = [
-        ('dwSize', COORD),
-        ('dwCursorPosition', COORD),
-        ('wAttributes', ctypes.c_ushort),
-        ('srWindow', SmallRECT),
-        ('dwMaximumWindowSize', COORD)
+        ("dwSize", COORD),
+        ("dwCursorPosition", COORD),
+        ("wAttributes", ctypes.c_ushort),
+        ("srWindow", SmallRECT),
+        ("dwMaximumWindowSize", COORD),
     ]
 
 
@@ -88,7 +136,9 @@ def init_kernel32(kernel32=None):
     :rtype: tuple
     """
     if not kernel32:
-        kernel32 = ctypes.LibraryLoader(ctypes.WinDLL).kernel32  # Load our own instance. Unique memory address.
+        kernel32 = ctypes.LibraryLoader(
+            ctypes.WinDLL
+        ).kernel32  # Load our own instance. Unique memory address.
         kernel32.GetStdHandle.argtypes = [ctypes.c_ulong]
         kernel32.GetStdHandle.restype = ctypes.c_void_p
         kernel32.GetConsoleScreenBufferInfo.argtypes = [
@@ -98,11 +148,11 @@ def init_kernel32(kernel32=None):
         kernel32.GetConsoleScreenBufferInfo.restype = ctypes.c_long
 
     # Get handles.
-    if hasattr(sys.stderr, '_original_stream'):
+    if hasattr(sys.stderr, "_original_stream"):
         stderr = INVALID_HANDLE_VALUE
     else:
         stderr = kernel32.GetStdHandle(STD_ERROR_HANDLE)
-    if hasattr(sys.stdout, '_original_stream'):
+    if hasattr(sys.stdout, "_original_stream"):
         stdout = INVALID_HANDLE_VALUE
     else:
         stdout = kernel32.GetStdHandle(STD_OUTPUT_HANDLE)
@@ -133,7 +183,9 @@ def get_console_info(kernel32, handle):
     lpcsbi = ctypes.byref(csbi)
     dword = ctypes.c_ulong()  # Populated by GetConsoleMode.
     lpdword = ctypes.byref(dword)
-    if not kernel32.GetConsoleScreenBufferInfo(handle, lpcsbi) or not kernel32.GetConsoleMode(handle, lpdword):
+    if not kernel32.GetConsoleScreenBufferInfo(
+        handle, lpcsbi
+    ) or not kernel32.GetConsoleMode(handle, lpdword):
         raise ctypes.WinError()
 
     # Parse data.
@@ -162,17 +214,17 @@ def bg_color_native_ansi(kernel32, stderr, stdout):
         if stderr == INVALID_HANDLE_VALUE:
             raise OSError
         bg_color, native_ansi = get_console_info(kernel32, stderr)[1:]
-    except OSError:
+    except OSError as exc:
         try:
             if stdout == INVALID_HANDLE_VALUE:
-                raise OSError
+                raise OSError from exc
             bg_color, native_ansi = get_console_info(kernel32, stdout)[1:]
         except OSError:
-            bg_color, native_ansi = WINDOWS_CODES['black'], False
+            bg_color, native_ansi = WINDOWS_CODES["black"], False
     return bg_color, native_ansi
 
 
-class WindowsStream(object):
+class WindowsStream:
     """Replacement stream which overrides sys.stdout or sys.stderr. When writing or printing, ANSI codes are converted.
 
     ANSI (Linux/Unix) color codes are converted into win32 system calls, changing the next character's color before
@@ -191,8 +243,14 @@ class WindowsStream(object):
     :ivar int default_bg: Background Windows color code at the time of instantiation.
     """
 
-    ALL_BG_CODES = [v for k, v in WINDOWS_CODES.items() if k.startswith('bg') or k.startswith('hibg')]
-    COMPILED_CODES = dict((v, WINDOWS_CODES[k]) for k, v in BASE_CODES.items() if k in WINDOWS_CODES)
+    ALL_BG_CODES = [
+        v
+        for k, v in WINDOWS_CODES.items()
+        if k.startswith("bg") or k.startswith("hibg")
+    ]
+    COMPILED_CODES = dict(
+        (v, WINDOWS_CODES[k]) for k, v in BASE_CODES.items() if k in WINDOWS_CODES
+    )
 
     def __init__(self, kernel32, stream_handle, original_stream):
         """Constructor.
@@ -219,7 +277,7 @@ class WindowsStream(object):
         try:
             return get_console_info(self._kernel32, self._stream_handle)[:2]
         except OSError:
-            return WINDOWS_CODES['white'], WINDOWS_CODES['black']
+            return WINDOWS_CODES["white"], WINDOWS_CODES["black"]
 
     @colors.setter
     def colors(self, color_code):
@@ -240,19 +298,23 @@ class WindowsStream(object):
         :param int color_code: Color code from WINDOWS_CODES.
         """
         if color_code is None:
-            color_code = WINDOWS_CODES['/all']
+            color_code = WINDOWS_CODES["/all"]
 
         # Get current color code.
         current_fg, current_bg = self.colors
 
         # Handle special negative codes. Also determine the final color code.
-        if color_code == WINDOWS_CODES['/fg']:
-            final_color_code = self.default_fg | current_bg  # Reset the foreground only.
-        elif color_code == WINDOWS_CODES['/bg']:
-            final_color_code = current_fg | self.default_bg  # Reset the background only.
-        elif color_code == WINDOWS_CODES['/all']:
+        if color_code == WINDOWS_CODES["/fg"]:
+            final_color_code = (
+                self.default_fg | current_bg
+            )  # Reset the foreground only.
+        elif color_code == WINDOWS_CODES["/bg"]:
+            final_color_code = (
+                current_fg | self.default_bg
+            )  # Reset the background only.
+        elif color_code == WINDOWS_CODES["/all"]:
             final_color_code = self.default_fg | self.default_bg  # Reset both.
-        elif color_code == WINDOWS_CODES['bgblack']:
+        elif color_code == WINDOWS_CODES["bgblack"]:
             final_color_code = current_fg  # Black background.
         else:
             new_is_bg = color_code in self.ALL_BG_CODES
@@ -272,15 +334,17 @@ class WindowsStream(object):
                 continue
             if not RE_SPLIT.match(segment):
                 # No color codes, print regular text.
-                print(segment, file=self._original_stream, end='')
+                print(segment, file=self._original_stream, end="")
                 self._original_stream.flush()
                 continue
-            for color_code in (int(c) for c in RE_NUMBER_SEARCH.findall(segment)[0].split(';')):
+            for color_code in (
+                int(c) for c in RE_NUMBER_SEARCH.findall(segment)[0].split(";")
+            ):
                 if color_code in self.COMPILED_CODES:
                     self.colors = self.COMPILED_CODES[color_code]
 
 
-class Windows(object):
+class Windows:
     """Enable and disable Windows support for ANSI color character codes.
 
     Call static method Windows.enable() to enable color support for the remainder of the process' lifetime.
@@ -306,26 +370,28 @@ class Windows(object):
             return False
 
         # Restore default colors.
-        if hasattr(sys.stderr, '_original_stream'):
-            getattr(sys, 'stderr').color = None
-        if hasattr(sys.stdout, '_original_stream'):
-            getattr(sys, 'stdout').color = None
+        if hasattr(sys.stderr, "_original_stream"):
+            getattr(sys, "stderr").color = None
+        if hasattr(sys.stdout, "_original_stream"):
+            getattr(sys, "stdout").color = None
 
         # Restore original streams.
         changed = False
-        if hasattr(sys.stderr, '_original_stream'):
+        if hasattr(sys.stderr, "_original_stream"):
             changed = True
-            sys.stderr = getattr(sys.stderr, '_original_stream')
-        if hasattr(sys.stdout, '_original_stream'):
+            sys.stderr = getattr(sys.stderr, "_original_stream")
+        if hasattr(sys.stdout, "_original_stream"):
             changed = True
-            sys.stdout = getattr(sys.stdout, '_original_stream')
+            sys.stdout = getattr(sys.stdout, "_original_stream")
 
         return changed
 
     @staticmethod
     def is_enabled():
         """Return True if either stderr or stdout has colors enabled."""
-        return hasattr(sys.stderr, '_original_stream') or hasattr(sys.stdout, '_original_stream')
+        return hasattr(sys.stderr, "_original_stream") or hasattr(
+            sys.stdout, "_original_stream"
+        )
 
     @classmethod
     def enable(cls, auto_colors=False, reset_atexit=False):

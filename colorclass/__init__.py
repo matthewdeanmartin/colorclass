@@ -19,20 +19,19 @@ from colorclass.toggles import set_dark_background  # noqa
 from colorclass.toggles import set_light_background  # noqa
 from colorclass.windows import Windows  # noqa
 
-
 __all__ = (
-    'Color',
-    'disable_all_colors',
-    'enable_all_colors',
-    'is_enabled',
-    'is_light',
-    'list_tags',
-    'set_dark_background',
-    'set_light_background',
-    'Windows',
+    "Color",
+    "disable_all_colors",
+    "enable_all_colors",
+    "is_enabled",
+    "is_light",
+    "list_tags",
+    "set_dark_background",
+    "set_light_background",
+    "Windows",
 )
 
 
-__author__ = '@Robpol86'
-__license__ = 'MIT'
-__version__ = '2.2.0'
+__author__ = "@Robpol86"
+__license__ = "MIT"
+__version__ = "2.2.0"

@@ -3,11 +3,17 @@ Changelog
 
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
+2.2.2 - 2023-05-23
+------------------
+
+Added
+    * Build scripts
+
 2.2.1 - 2021-12-08
 ------------------
 
 Added
-    * Publishin wheels
+    * Publishing wheels
 
 2.2.0 - 2016-05-14
 ------------------

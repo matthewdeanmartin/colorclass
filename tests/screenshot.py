@@ -16,7 +16,7 @@ from colorclass.windows import WINDOWS_CODES
 from tests.conftest import PROJECT_ROOT
 
 STARTF_USEFILLATTRIBUTE = 0x00000010
-STARTF_USESHOWWINDOW = getattr(subprocess, 'STARTF_USESHOWWINDOW', 1)
+STARTF_USESHOWWINDOW = getattr(subprocess, "STARTF_USESHOWWINDOW", 1)
 STILL_ACTIVE = 259
 SW_MAXIMIZE = 3
 
@@ -25,24 +25,24 @@ class StartupInfo(ctypes.Structure):
     """STARTUPINFO structure."""
 
     _fields_ = [
-        ('cb', ctypes.c_ulong),
-        ('lpReserved', ctypes.c_char_p),
-        ('lpDesktop', ctypes.c_char_p),
-        ('lpTitle', ctypes.c_char_p),
-        ('dwX', ctypes.c_ulong),
-        ('dwY', ctypes.c_ulong),
-        ('dwXSize', ctypes.c_ulong),
-        ('dwYSize', ctypes.c_ulong),
-        ('dwXCountChars', ctypes.c_ulong),
-        ('dwYCountChars', ctypes.c_ulong),
-        ('dwFillAttribute', ctypes.c_ulong),
-        ('dwFlags', ctypes.c_ulong),
-        ('wShowWindow', ctypes.c_ushort),
-        ('cbReserved2', ctypes.c_ushort),
-        ('lpReserved2', ctypes.c_char_p),
-        ('hStdInput', ctypes.c_ulong),
-        ('hStdOutput', ctypes.c_ulong),
-        ('hStdError', ctypes.c_ulong),
+        ("cb", ctypes.c_ulong),
+        ("lpReserved", ctypes.c_char_p),
+        ("lpDesktop", ctypes.c_char_p),
+        ("lpTitle", ctypes.c_char_p),
+        ("dwX", ctypes.c_ulong),
+        ("dwY", ctypes.c_ulong),
+        ("dwXSize", ctypes.c_ulong),
+        ("dwYSize", ctypes.c_ulong),
+        ("dwXCountChars", ctypes.c_ulong),
+        ("dwYCountChars", ctypes.c_ulong),
+        ("dwFillAttribute", ctypes.c_ulong),
+        ("dwFlags", ctypes.c_ulong),
+        ("wShowWindow", ctypes.c_ushort),
+        ("cbReserved2", ctypes.c_ushort),
+        ("lpReserved2", ctypes.c_char_p),
+        ("hStdInput", ctypes.c_ulong),
+        ("hStdOutput", ctypes.c_ulong),
+        ("hStdError", ctypes.c_ulong),
     ]
 
     def __init__(self, maximize=False, title=None, white_bg=False):
@@ -61,17 +61,17 @@ class StartupInfo(ctypes.Structure):
             self.lpTitle = ctypes.c_char_p(title)
         if white_bg:
             self.dwFlags |= STARTF_USEFILLATTRIBUTE
-            self.dwFillAttribute = WINDOWS_CODES['hibgwhite'] | WINDOWS_CODES['black']
+            self.dwFillAttribute = WINDOWS_CODES["hibgwhite"] | WINDOWS_CODES["black"]
 
 
 class ProcessInfo(ctypes.Structure):
     """PROCESS_INFORMATION structure."""
 
     _fields_ = [
-        ('hProcess', ctypes.c_void_p),
-        ('hThread', ctypes.c_void_p),
-        ('dwProcessId', ctypes.c_ulong),
-        ('dwThreadId', ctypes.c_ulong),
+        ("hProcess", ctypes.c_void_p),
+        ("hThread", ctypes.c_void_p),
+        ("dwProcessId", ctypes.c_ulong),
+        ("dwThreadId", ctypes.c_ulong),
     ]
 
 
@@ -91,20 +91,29 @@ class RunNewConsole(object):
         :param bool white_bg: New console window will be black text on white background.
         """
         if title is None:
-            title = 'pytest-{0}-{1}'.format(os.getpid(), random.randint(1000, 9999)).encode('ascii')
-        self.startup_info = StartupInfo(maximize=maximized, title=title, white_bg=white_bg)
+            title = "pytest-{0}-{1}".format(
+                os.getpid(), random.randint(1000, 9999)
+            ).encode("ascii")
+        self.startup_info = StartupInfo(
+            maximize=maximized, title=title, white_bg=white_bg
+        )
         self.process_info = ProcessInfo()
-        self.command_str = subprocess.list2cmdline(command).encode('ascii')
+        self.command_str = subprocess.list2cmdline(command).encode("ascii")
         self._handles = list()
         self._kernel32 = ctypes.LibraryLoader(ctypes.WinDLL).kernel32
-        self._kernel32.GetExitCodeProcess.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ulong)]
+        self._kernel32.GetExitCodeProcess.argtypes = [
+            ctypes.c_void_p,
+            ctypes.POINTER(ctypes.c_ulong),
+        ]
         self._kernel32.GetExitCodeProcess.restype = ctypes.c_long
 
     def __del__(self):
         """Close win32 handles."""
         while self._handles:
             try:
-                self._kernel32.CloseHandle(self._handles.pop(0))  # .pop() is thread safe.
+                self._kernel32.CloseHandle(
+                    self._handles.pop(0)
+                )  # .pop() is thread safe.
             except IndexError:
                 break
 
@@ -118,9 +127,9 @@ class RunNewConsole(object):
             False,  # bInheritHandles
             subprocess.CREATE_NEW_CONSOLE,  # dwCreationFlags
             None,  # lpEnvironment
-            str(PROJECT_ROOT).encode('ascii'),  # lpCurrentDirectory
+            str(PROJECT_ROOT).encode("ascii"),  # lpCurrentDirectory
             ctypes.byref(self.startup_info),  # lpStartupInfo
-            ctypes.byref(self.process_info)  # lpProcessInformation
+            ctypes.byref(self.process_info),  # lpProcessInformation
         ):
             raise ctypes.WinError()
 
@@ -132,7 +141,9 @@ class RunNewConsole(object):
         self.hwnd = 0
         for _ in range(int(5 / 0.1)):
             # Takes time for console window to initialize.
-            self.hwnd = ctypes.windll.user32.FindWindowA(None, self.startup_info.lpTitle)
+            self.hwnd = ctypes.windll.user32.FindWindowA(
+                None, self.startup_info.lpTitle
+            )
             if self.hwnd:
                 break
             time.sleep(0.1)
@@ -148,7 +159,9 @@ class RunNewConsole(object):
             status = ctypes.c_ulong(STILL_ACTIVE)
             while status.value == STILL_ACTIVE:
                 time.sleep(0.1)
-                if not self._kernel32.GetExitCodeProcess(self.process_info.hProcess, ctypes.byref(status)):
+                if not self._kernel32.GetExitCodeProcess(
+                    self.process_info.hProcess, ctypes.byref(status)
+                ):
                     raise ctypes.WinError()
             assert status.value == 0
         finally:
@@ -161,9 +174,11 @@ class RunNewConsole(object):
         :return: Yields region the new window is in (left, upper, right, lower).
         :rtype: tuple
         """
-        rect = ctypes.create_string_buffer(16)  # To be written to by GetWindowRect. RECT structure.
+        rect = ctypes.create_string_buffer(
+            16
+        )  # To be written to by GetWindowRect. RECT structure.
         while ctypes.windll.user32.GetWindowRect(self.hwnd, rect):
-            left, top, right, bottom = struct.unpack('llll', rect.raw)
+            left, top, right, bottom = struct.unpack("llll", rect.raw)
             width, height = right - left, bottom - top
             assert width > 1
             assert height > 1
@@ -231,11 +246,13 @@ def count_subimages(screenshot, subimg):
         for x_pos in range(screenshot.width - si_width + 1):
             if row[x_pos] != si_pixel:
                 continue  # First pixel does not match.
-            if row[x_pos:x_pos + si_width] != si_row:
+            if row[x_pos : x_pos + si_width] != si_row:
                 continue  # Row does not match.
             # Found match for interesting row of subimg in screenshot.
             y_corrected = y_pos - si_y
-            with screenshot.crop((x_pos, y_corrected, x_pos + si_width, y_corrected + si_height)) as cropped:
+            with screenshot.crop(
+                (x_pos, y_corrected, x_pos + si_width, y_corrected + si_height)
+            ) as cropped:
                 if list(cropped.getdata()) == si_pixels:
                     occurrences += 1
 
@@ -255,11 +272,12 @@ def try_candidates(screenshot, subimg_candidates, expected_count):
     :rtype: int
     """
     from PIL import Image
+
     count_found = 0
 
     for subimg_path in subimg_candidates:
         with Image.open(subimg_path) as rgba_s:
-            with rgba_s.convert(mode='RGB') as subimg:
+            with rgba_s.convert(mode="RGB") as subimg:
                 # Make sure subimage isn't too large.
                 assert subimg.width < 256
                 assert subimg.height < 256
@@ -284,14 +302,17 @@ def screenshot_until_match(save_to, timeout, subimg_candidates, expected_count, 
     :param iter gen: Generator yielding window position and size to crop screenshot to.
     """
     from PIL import ImageGrab
-    assert save_to.endswith('.png')
+
+    assert save_to.endswith(".png")
     stop_after = time.time() + timeout
 
     # Take screenshots until subimage is found.
     while True:
         with ImageGrab.grab(next(gen)) as rgba:
-            with rgba.convert(mode='RGB') as screenshot:
-                count_found = try_candidates(screenshot, subimg_candidates, expected_count)
+            with rgba.convert(mode="RGB") as screenshot:
+                count_found = try_candidates(
+                    screenshot, subimg_candidates, expected_count
+                )
                 if count_found == expected_count or time.time() > stop_after:
                     screenshot.save(save_to)
                     assert count_found == expected_count

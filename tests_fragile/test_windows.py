@@ -23,7 +23,12 @@ from tests.screenshot import RunNewConsole, screenshot_until_match
 class MockKernel32(object):
     """Mock kernel32."""
 
-    def __init__(self, stderr=windows.INVALID_HANDLE_VALUE, stdout=windows.INVALID_HANDLE_VALUE, set_mode=0x0):
+    def __init__(
+        self,
+        stderr=windows.INVALID_HANDLE_VALUE,
+        stdout=windows.INVALID_HANDLE_VALUE,
+        set_mode=0x0,
+    ):
         """Constructor."""
         self.set_mode = set_mode
         self.stderr = stderr
@@ -74,8 +79,8 @@ class MockSys(object):
 
     def __init__(self, stderr=None, stdout=None):
         """Constructor."""
-        self.stderr = stderr or type('', (), {})
-        self.stdout = stdout or type('', (), {})
+        self.stderr = stderr or type("", (), {})
+        self.stdout = stdout or type("", (), {})
 
 
 @pytest.mark.skipif(str(not windows.IS_WINDOWS))
@@ -108,8 +113,8 @@ def test_init_kernel32_unique():
     assert stdout_b == stdout_d
 
 
-@pytest.mark.parametrize('stderr_invalid', [False, True])
-@pytest.mark.parametrize('stdout_invalid', [False, True])
+@pytest.mark.parametrize("stderr_invalid", [False, True])
+@pytest.mark.parametrize("stdout_invalid", [False, True])
 def test_init_kernel32_valid_handle(monkeypatch, stderr_invalid, stdout_invalid):
     """Test valid/invalid handle handling.
 
@@ -118,11 +123,11 @@ def test_init_kernel32_valid_handle(monkeypatch, stderr_invalid, stdout_invalid)
     :param bool stdout_invalid: Mock stdout is valid.
     """
     mock_sys = MockSys()
-    monkeypatch.setattr(windows, 'sys', mock_sys)
+    monkeypatch.setattr(windows, "sys", mock_sys)
     if stderr_invalid:
-        setattr(mock_sys.stderr, '_original_stream', True)
+        setattr(mock_sys.stderr, "_original_stream", True)
     if stdout_invalid:
-        setattr(mock_sys.stdout, '_original_stream', True)
+        setattr(mock_sys.stdout, "_original_stream", True)
 
     stderr, stdout = windows.init_kernel32(MockKernel32(stderr=100, stdout=200))[1:]
 
@@ -145,11 +150,15 @@ def test_get_console_info():
     # Test error.
     if windows.IS_WINDOWS:
         with pytest.raises(OSError):
-            windows.get_console_info(windows.init_kernel32()[0], windows.INVALID_HANDLE_VALUE)
+            windows.get_console_info(
+                windows.init_kernel32()[0], windows.INVALID_HANDLE_VALUE
+            )
 
     # Test no error with mock methods.
     kernel32 = MockKernel32()
-    fg_color, bg_color, native_ansi = windows.get_console_info(kernel32, windows.INVALID_HANDLE_VALUE)
+    fg_color, bg_color, native_ansi = windows.get_console_info(
+        kernel32, windows.INVALID_HANDLE_VALUE
+    )
     assert fg_color == 7
     assert bg_color == 0
     assert native_ansi is False
@@ -163,8 +172,8 @@ def test_get_console_info():
         assert windows.get_console_info(kernel32, windows.INVALID_HANDLE_VALUE)[-1]
 
 
-@pytest.mark.parametrize('stderr', [1, windows.INVALID_HANDLE_VALUE])
-@pytest.mark.parametrize('stdout', [2, windows.INVALID_HANDLE_VALUE])
+@pytest.mark.parametrize("stderr", [1, windows.INVALID_HANDLE_VALUE])
+@pytest.mark.parametrize("stdout", [2, windows.INVALID_HANDLE_VALUE])
 def test_bg_color_native_ansi(stderr, stdout):
     """Test function.
 
@@ -174,7 +183,10 @@ def test_bg_color_native_ansi(stderr, stdout):
     kernel32 = MockKernel32(set_mode=0x4)
     kernel32.wAttributes = 240
     actual = windows.bg_color_native_ansi(kernel32, stderr, stdout)
-    if stderr == windows.INVALID_HANDLE_VALUE and stdout == windows.INVALID_HANDLE_VALUE:
+    if (
+        stderr == windows.INVALID_HANDLE_VALUE
+        and stdout == windows.INVALID_HANDLE_VALUE
+    ):
         expected = 0, False
     else:
         expected = 240, True
@@ -185,45 +197,81 @@ def test_windows_stream():
     """Test class."""
     # Test error.
     if windows.IS_WINDOWS:
-        stream = windows.WindowsStream(windows.init_kernel32()[0], windows.INVALID_HANDLE_VALUE, StringIO())
-        assert stream.colors == (windows.WINDOWS_CODES['white'], windows.WINDOWS_CODES['black'])
-        stream.colors = windows.WINDOWS_CODES['red'] | windows.WINDOWS_CODES['bgblue']  # No exception, just ignore.
-        assert stream.colors == (windows.WINDOWS_CODES['white'], windows.WINDOWS_CODES['black'])
+        stream = windows.WindowsStream(
+            windows.init_kernel32()[0], windows.INVALID_HANDLE_VALUE, StringIO()
+        )
+        assert stream.colors == (
+            windows.WINDOWS_CODES["white"],
+            windows.WINDOWS_CODES["black"],
+        )
+        stream.colors = (
+            windows.WINDOWS_CODES["red"] | windows.WINDOWS_CODES["bgblue"]
+        )  # No exception, just ignore.
+        assert stream.colors == (
+            windows.WINDOWS_CODES["white"],
+            windows.WINDOWS_CODES["black"],
+        )
 
     # Test __getattr__() and color resetting.
     original_stream = StringIO()
-    stream = windows.WindowsStream(MockKernel32(), windows.INVALID_HANDLE_VALUE, original_stream)
+    stream = windows.WindowsStream(
+        MockKernel32(), windows.INVALID_HANDLE_VALUE, original_stream
+    )
     assert stream.writelines == original_stream.writelines  # Test __getattr__().
-    assert stream.colors == (windows.WINDOWS_CODES['white'], windows.WINDOWS_CODES['black'])
-    stream.colors = windows.WINDOWS_CODES['red'] | windows.WINDOWS_CODES['bgblue']
-    assert stream.colors == (windows.WINDOWS_CODES['red'], windows.WINDOWS_CODES['bgblue'])
+    assert stream.colors == (
+        windows.WINDOWS_CODES["white"],
+        windows.WINDOWS_CODES["black"],
+    )
+    stream.colors = windows.WINDOWS_CODES["red"] | windows.WINDOWS_CODES["bgblue"]
+    assert stream.colors == (
+        windows.WINDOWS_CODES["red"],
+        windows.WINDOWS_CODES["bgblue"],
+    )
     stream.colors = None  # Resets colors to original.
-    assert stream.colors == (windows.WINDOWS_CODES['white'], windows.WINDOWS_CODES['black'])
+    assert stream.colors == (
+        windows.WINDOWS_CODES["white"],
+        windows.WINDOWS_CODES["black"],
+    )
 
     # Test special negative codes.
-    stream.colors = windows.WINDOWS_CODES['red'] | windows.WINDOWS_CODES['bgblue']
-    stream.colors = windows.WINDOWS_CODES['/fg']
-    assert stream.colors == (windows.WINDOWS_CODES['white'], windows.WINDOWS_CODES['bgblue'])
-    stream.colors = windows.WINDOWS_CODES['red'] | windows.WINDOWS_CODES['bgblue']
-    stream.colors = windows.WINDOWS_CODES['/bg']
-    assert stream.colors == (windows.WINDOWS_CODES['red'], windows.WINDOWS_CODES['black'])
-    stream.colors = windows.WINDOWS_CODES['red'] | windows.WINDOWS_CODES['bgblue']
-    stream.colors = windows.WINDOWS_CODES['bgblack']
-    assert stream.colors == (windows.WINDOWS_CODES['red'], windows.WINDOWS_CODES['black'])
+    stream.colors = windows.WINDOWS_CODES["red"] | windows.WINDOWS_CODES["bgblue"]
+    stream.colors = windows.WINDOWS_CODES["/fg"]
+    assert stream.colors == (
+        windows.WINDOWS_CODES["white"],
+        windows.WINDOWS_CODES["bgblue"],
+    )
+    stream.colors = windows.WINDOWS_CODES["red"] | windows.WINDOWS_CODES["bgblue"]
+    stream.colors = windows.WINDOWS_CODES["/bg"]
+    assert stream.colors == (
+        windows.WINDOWS_CODES["red"],
+        windows.WINDOWS_CODES["black"],
+    )
+    stream.colors = windows.WINDOWS_CODES["red"] | windows.WINDOWS_CODES["bgblue"]
+    stream.colors = windows.WINDOWS_CODES["bgblack"]
+    assert stream.colors == (
+        windows.WINDOWS_CODES["red"],
+        windows.WINDOWS_CODES["black"],
+    )
 
     # Test write.
-    stream.write(Color('{/all}A{red}B{bgblue}C'))
+    stream.write(Color("{/all}A{red}B{bgblue}C"))
     original_stream.seek(0)
-    assert original_stream.read() == 'ABC'
-    assert stream.colors == (windows.WINDOWS_CODES['red'], windows.WINDOWS_CODES['bgblue'])
+    assert original_stream.read() == "ABC"
+    assert stream.colors == (
+        windows.WINDOWS_CODES["red"],
+        windows.WINDOWS_CODES["bgblue"],
+    )
 
     # Test ignore invalid code.
     original_stream.seek(0)
     original_stream.truncate()
-    stream.write('\x1b[0mA\x1b[31mB\x1b[44;999mC')
+    stream.write("\x1b[0mA\x1b[31mB\x1b[44;999mC")
     original_stream.seek(0)
-    assert original_stream.read() == 'ABC'
-    assert stream.colors == (windows.WINDOWS_CODES['red'], windows.WINDOWS_CODES['bgblue'])
+    assert original_stream.read() == "ABC"
+    assert stream.colors == (
+        windows.WINDOWS_CODES["red"],
+        windows.WINDOWS_CODES["bgblue"],
+    )
 
 
 @pytest.mark.skipif(str(windows.IS_WINDOWS))
@@ -231,11 +279,11 @@ def test_windows_nix():
     """Test enable/disable on non-Windows platforms."""
     with windows.Windows():
         assert not windows.Windows.is_enabled()
-        assert not hasattr(sys.stderr, '_original_stream')
-        assert not hasattr(sys.stdout, '_original_stream')
+        assert not hasattr(sys.stderr, "_original_stream")
+        assert not hasattr(sys.stdout, "_original_stream")
     assert not windows.Windows.is_enabled()
-    assert not hasattr(sys.stderr, '_original_stream')
-    assert not hasattr(sys.stdout, '_original_stream')
+    assert not hasattr(sys.stderr, "_original_stream")
+    assert not hasattr(sys.stdout, "_original_stream")
 
 
 def test_windows_auto_colors(monkeypatch):
@@ -244,39 +292,43 @@ def test_windows_auto_colors(monkeypatch):
     :param monkeypatch: pytest fixture.
     """
     mock_sys = MockSys()
-    monkeypatch.setattr(windows, 'atexit', type('', (), {'register': staticmethod(lambda _: 0 / 0)}))
-    monkeypatch.setattr(windows, 'IS_WINDOWS', True)
-    monkeypatch.setattr(windows, 'sys', mock_sys)
-    monkeypatch.setattr(ANSICodeMapping, 'LIGHT_BACKGROUND', None)
+    monkeypatch.setattr(
+        windows, "atexit", type("", (), {"register": staticmethod(lambda _: 0 / 0)})
+    )
+    monkeypatch.setattr(windows, "IS_WINDOWS", True)
+    monkeypatch.setattr(windows, "sys", mock_sys)
+    monkeypatch.setattr(ANSICodeMapping, "LIGHT_BACKGROUND", None)
 
     # Test no valid handles.
     kernel32 = MockKernel32()
-    monkeypatch.setattr(windows, 'init_kernel32', lambda: (kernel32, -1, -1))
+    monkeypatch.setattr(windows, "init_kernel32", lambda: (kernel32, -1, -1))
     assert not windows.Windows.enable()
     assert not windows.Windows.is_enabled()
-    assert not hasattr(mock_sys.stderr, '_original_stream')
-    assert not hasattr(mock_sys.stdout, '_original_stream')
+    assert not hasattr(mock_sys.stderr, "_original_stream")
+    assert not hasattr(mock_sys.stdout, "_original_stream")
     assert ANSICodeMapping.LIGHT_BACKGROUND is None
 
     # Test auto colors dark background.
-    kernel32.set_mode = 0x4  # Enable native ANSI to have Windows skip replacing streams.
-    monkeypatch.setattr(windows, 'init_kernel32', lambda: (kernel32, 1, 2))
+    kernel32.set_mode = (
+        0x4  # Enable native ANSI to have Windows skip replacing streams.
+    )
+    monkeypatch.setattr(windows, "init_kernel32", lambda: (kernel32, 1, 2))
     assert not windows.Windows.enable(auto_colors=True)
     assert not windows.Windows.is_enabled()
-    assert not hasattr(mock_sys.stderr, '_original_stream')
-    assert not hasattr(mock_sys.stdout, '_original_stream')
+    assert not hasattr(mock_sys.stderr, "_original_stream")
+    assert not hasattr(mock_sys.stdout, "_original_stream")
     assert ANSICodeMapping.LIGHT_BACKGROUND is False
 
     # Test auto colors light background.
     kernel32.wAttributes = 240
     assert not windows.Windows.enable(auto_colors=True)
     assert not windows.Windows.is_enabled()
-    assert not hasattr(mock_sys.stderr, '_original_stream')
-    assert not hasattr(mock_sys.stdout, '_original_stream')
+    assert not hasattr(mock_sys.stderr, "_original_stream")
+    assert not hasattr(mock_sys.stdout, "_original_stream")
     assert ANSICodeMapping.LIGHT_BACKGROUND is True
 
 
-@pytest.mark.parametrize('valid', ['stderr', 'stdout', 'both'])
+@pytest.mark.parametrize("valid", ["stderr", "stdout", "both"])
 def test_windows_replace_streams(monkeypatch, tmpdir, valid):
     """Test Windows class stdout and stderr replacement.
 
@@ -285,28 +337,37 @@ def test_windows_replace_streams(monkeypatch, tmpdir, valid):
     :param str valid: Which mock stream(s) should be valid.
     """
     ac = list()  # atexit called.
-    mock_sys = MockSys(stderr=tmpdir.join('stderr').open(mode='wb'), stdout=tmpdir.join('stdout').open(mode='wb'))
-    monkeypatch.setattr(windows, 'atexit', type('', (), {'register': staticmethod(lambda _: ac.append(1))}))
-    monkeypatch.setattr(windows, 'IS_WINDOWS', True)
-    monkeypatch.setattr(windows, 'sys', mock_sys)
+    mock_sys = MockSys(
+        stderr=tmpdir.join("stderr").open(mode="wb"),
+        stdout=tmpdir.join("stdout").open(mode="wb"),
+    )
+    monkeypatch.setattr(
+        windows,
+        "atexit",
+        type("", (), {"register": staticmethod(lambda _: ac.append(1))}),
+    )
+    monkeypatch.setattr(windows, "IS_WINDOWS", True)
+    monkeypatch.setattr(windows, "sys", mock_sys)
 
     # Mock init_kernel32.
-    stderr = 1 if valid in ('stderr', 'both') else windows.INVALID_HANDLE_VALUE
-    stdout = 2 if valid in ('stdout', 'both') else windows.INVALID_HANDLE_VALUE
-    monkeypatch.setattr(windows, 'init_kernel32', lambda: (MockKernel32(), stderr, stdout))
+    stderr = 1 if valid in ("stderr", "both") else windows.INVALID_HANDLE_VALUE
+    stdout = 2 if valid in ("stdout", "both") else windows.INVALID_HANDLE_VALUE
+    monkeypatch.setattr(
+        windows, "init_kernel32", lambda: (MockKernel32(), stderr, stdout)
+    )
 
     # Test.
     assert windows.Windows.enable(reset_atexit=True)
     assert windows.Windows.is_enabled()
     assert len(ac) == 1
     if stderr != windows.INVALID_HANDLE_VALUE:
-        assert hasattr(mock_sys.stderr, '_original_stream')
+        assert hasattr(mock_sys.stderr, "_original_stream")
     else:
-        assert not hasattr(mock_sys.stderr, '_original_stream')
+        assert not hasattr(mock_sys.stderr, "_original_stream")
     if stdout != windows.INVALID_HANDLE_VALUE:
-        assert hasattr(mock_sys.stdout, '_original_stream')
+        assert hasattr(mock_sys.stdout, "_original_stream")
     else:
-        assert not hasattr(mock_sys.stdout, '_original_stream')
+        assert not hasattr(mock_sys.stdout, "_original_stream")
 
     # Test multiple disable.
     assert windows.Windows.disable()
@@ -326,13 +387,15 @@ def test_enable_disable(tmpdir):
 
     :param tmpdir: pytest fixture.
     """
-    screenshot = PROJECT_ROOT.join('test_windows_test_enable_disable.png')
+    screenshot = PROJECT_ROOT.join("test_windows_test_enable_disable.png")
     if screenshot.check():
         screenshot.remove()
-    script = tmpdir.join('script.py')
+    script = tmpdir.join("script.py")
     command = [sys.executable, str(script)]
 
-    script.write(dedent("""\
+    script.write(
+        dedent(
+            """\
     from __future__ import print_function
     import os, time
     from colorclass import Color, Windows
@@ -347,11 +410,18 @@ def test_enable_disable(tmpdir):
     stop_after = time.time() + 20
     while not os.path.exists(r'%s') and time.time() < stop_after:
         time.sleep(0.5)
-    """) % str(screenshot))
+    """
+        )
+        % str(screenshot)
+    )
 
     # Setup expected.
-    with_colors = [str(p) for p in PROJECT_ROOT.join('tests').listdir('sub_red_light_fg_*.bmp')]
-    sans_colors = [str(p) for p in PROJECT_ROOT.join('tests').listdir('sub_red_sans_*.bmp')]
+    with_colors = [
+        str(p) for p in PROJECT_ROOT.join("tests").listdir("sub_red_light_fg_*.bmp")
+    ]
+    sans_colors = [
+        str(p) for p in PROJECT_ROOT.join("tests").listdir("sub_red_sans_*.bmp")
+    ]
     assert with_colors
     assert sans_colors
 
@@ -367,13 +437,15 @@ def test_box_characters(tmpdir):
 
     :param tmpdir: pytest fixture.
     """
-    screenshot = PROJECT_ROOT.join('test_windows_test_box_characters.png')
+    screenshot = PROJECT_ROOT.join("test_windows_test_box_characters.png")
     if screenshot.check():
         screenshot.remove()
-    script = tmpdir.join('script.py')
+    script = tmpdir.join("script.py")
     command = [sys.executable, str(script)]
 
-    script.write(dedent("""\
+    script.write(
+        dedent(
+            """\
     from __future__ import print_function
     import os, time
     from colorclass import Color, Windows
@@ -415,11 +487,18 @@ def test_box_characters(tmpdir):
     stop_after = time.time() + 20
     while not os.path.exists(r'%s') and time.time() < stop_after:
         time.sleep(0.5)
-    """) % str(screenshot))
+    """
+        )
+        % str(screenshot)
+    )
 
     # Setup expected.
-    with_colors = [str(p) for p in PROJECT_ROOT.join('tests').listdir('sub_box_green_*.bmp')]
-    sans_colors = [str(p) for p in PROJECT_ROOT.join('tests').listdir('sub_box_sans_*.bmp')]
+    with_colors = [
+        str(p) for p in PROJECT_ROOT.join("tests").listdir("sub_box_green_*.bmp")
+    ]
+    sans_colors = [
+        str(p) for p in PROJECT_ROOT.join("tests").listdir("sub_box_sans_*.bmp")
+    ]
     assert with_colors
     assert sans_colors
 

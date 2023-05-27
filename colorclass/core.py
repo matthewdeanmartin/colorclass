@@ -1,10 +1,13 @@
 """String subclass that handles ANSI color codes."""
+# pylint: disable=no-member
 
 from colorclass.codes import ANSICodeMapping
-from colorclass.parse import parse_input, RE_SPLIT
+from colorclass.parse import RE_SPLIT, parse_input
 from colorclass.search import build_color_index, find_char_color
 
-PARENT_CLASS = type(u'')
+# Bad name but it is public.
+# pylint: disable=invalid-name
+PARENT_CLASS = type("")
 
 
 def apply_text(incoming, func):
@@ -28,13 +31,13 @@ class ColorBytes(bytes):
 
     def __new__(cls, *args, **kwargs):
         """Save original class so decode() returns an instance of it."""
-        original_class = kwargs.pop('original_class')
+        original_class = kwargs.pop("original_class")
         combined_args = [cls] + list(args)
         instance = bytes.__new__(*combined_args, **kwargs)
         instance.original_class = original_class
         return instance
 
-    def decode(self, encoding='utf-8', errors='strict'):
+    def decode(self, encoding="utf-8", errors="strict"):
         """Decode using the codec registered for encoding. Default encoding is 'utf-8'.
 
         errors may be given to set a different error handling scheme. Default is 'strict' meaning that encoding errors
@@ -44,7 +47,7 @@ class ColorBytes(bytes):
         :param str encoding: Codec.
         :param str errors: Error handling scheme.
         """
-        original_class = getattr(self, 'original_class')
+        original_class = getattr(self, "original_class")
         return original_class(super(ColorBytes, self).decode(encoding, errors))
 
 
@@ -53,11 +56,13 @@ class ColorStr(PARENT_CLASS):
 
     def __new__(cls, *args, **kwargs):
         """Parse color markup and instantiate."""
-        keep_tags = kwargs.pop('keep_tags', False)
+        keep_tags = kwargs.pop("keep_tags", False)
 
         # Parse string.
         value_markup = args[0] if args else PARENT_CLASS()  # e.g. '{red}test{/red}'
-        value_colors, value_no_colors = parse_input(value_markup, ANSICodeMapping.DISABLE_COLORS, keep_tags)
+        value_colors, value_no_colors = parse_input(
+            value_markup, ANSICodeMapping.DISABLE_COLORS, keep_tags
+        )
         color_index = build_color_index(value_colors)
 
         # Instantiate.
@@ -81,7 +86,9 @@ class ColorStr(PARENT_CLASS):
             color_pos = self.color_index[int(item)]
         except TypeError:  # slice
             return super(ColorStr, self).__getitem__(item)
-        return self.__class__(find_char_color(self.value_colors, color_pos), keep_tags=True)
+        return self.__class__(
+            find_char_color(self.value_colors, color_pos), keep_tags=True
+        )
 
     def __iter__(self):
         """Yield one color-coded character at a time."""
@@ -102,7 +109,9 @@ class ColorStr(PARENT_CLASS):
 
     def __repr__(self):
         """Representation of a class instance (like datetime.datetime.now())."""
-        return '{name}({value})'.format(name=self.__class__.__name__, value=repr(self.value_colors))
+        return "{name}({value})".format(
+            name=self.__class__.__name__, value=repr(self.value_colors)
+        )
 
     def capitalize(self):
         """Return a copy of the string with only its first character capitalized."""
@@ -118,7 +127,9 @@ class ColorStr(PARENT_CLASS):
             result = self.value_no_colors.center(width, fillchar)
         else:
             result = self.value_no_colors.center(width)
-        return self.__class__(result.replace(self.value_no_colors, self.value_colors), keep_tags=True)
+        return self.__class__(
+            result.replace(self.value_no_colors, self.value_colors), keep_tags=True
+        )
 
     def count(self, sub, start=0, end=-1):
         """Return the number of non-overlapping occurrences of substring sub in string[start:end].
@@ -144,7 +155,7 @@ class ColorStr(PARENT_CLASS):
         args = [suffix, start] + ([] if end is None else [end])
         return self.value_no_colors.endswith(*args)
 
-    def encode(self, encoding=None, errors='strict'):
+    def encode(self, encoding=None, errors="strict"):
         """Encode using the codec registered for encoding. encoding defaults to the default encoding.
 
         errors may be given to set a different error handling scheme. Default is 'strict' meaning that encoding errors
@@ -154,9 +165,12 @@ class ColorStr(PARENT_CLASS):
         :param str encoding: Codec.
         :param str errors: Error handling scheme.
         """
-        return ColorBytes(super(ColorStr, self).encode(encoding, errors), original_class=self.__class__)
+        return ColorBytes(
+            super(ColorStr, self).encode(encoding, errors),
+            original_class=self.__class__,
+        )
 
-    def decode(self, encoding=None, errors='strict'):
+    def decode(self, encoding=None, errors="strict"):
         """Decode using the codec registered for encoding. encoding defaults to the default encoding.
 
         errors may be given to set a different error handling scheme. Default is 'strict' meaning that encoding errors
@@ -166,7 +180,9 @@ class ColorStr(PARENT_CLASS):
         :param str encoding: Codec.
         :param str errors: Error handling scheme.
         """
-        return self.__class__(super(ColorStr, self).decode(encoding, errors), keep_tags=True)
+        return self.__class__(
+            super(ColorStr, self).decode(encoding, errors), keep_tags=True
+        )
 
     def find(self, sub, start=None, end=None):
         """Return the lowest index where substring sub is found, such that sub is contained within string[start:end].
@@ -184,7 +200,9 @@ class ColorStr(PARENT_CLASS):
 
         The substitutions are identified by braces ('{' and '}').
         """
-        return self.__class__(super(ColorStr, self).format(*args, **kwargs), keep_tags=True)
+        return self.__class__(
+            super(ColorStr, self).format(*args, **kwargs), keep_tags=True
+        )
 
     def index(self, sub, start=None, end=None):
         """Like S.find() but raise ValueError when the substring is not found.
@@ -248,7 +266,9 @@ class ColorStr(PARENT_CLASS):
             result = self.value_no_colors.ljust(width, fillchar)
         else:
             result = self.value_no_colors.ljust(width)
-        return self.__class__(result.replace(self.value_no_colors, self.value_colors), keep_tags=True)
+        return self.__class__(
+            result.replace(self.value_no_colors, self.value_colors), keep_tags=True
+        )
 
     def rfind(self, sub, start=None, end=None):
         """Return the highest index where substring sub is found, such that sub is contained within string[start:end].
@@ -280,7 +300,9 @@ class ColorStr(PARENT_CLASS):
             result = self.value_no_colors.rjust(width, fillchar)
         else:
             result = self.value_no_colors.rjust(width)
-        return self.__class__(result.replace(self.value_no_colors, self.value_colors), keep_tags=True)
+        return self.__class__(
+            result.replace(self.value_no_colors, self.value_colors), keep_tags=True
+        )
 
     def splitlines(self, keepends=False):
         """Return a list of the lines in the string, breaking at line boundaries.
@@ -338,5 +360,7 @@ class ColorStr(PARENT_CLASS):
         if not self.value_no_colors:
             result = self.value_no_colors.zfill(width)
         else:
-            result = self.value_colors.replace(self.value_no_colors, self.value_no_colors.zfill(width))
+            result = self.value_colors.replace(
+                self.value_no_colors, self.value_no_colors.zfill(width)
+            )
         return self.__class__(result, keep_tags=True)
