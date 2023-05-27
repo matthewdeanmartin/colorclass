@@ -311,7 +311,7 @@ class ColorStr(PARENT_CLASS):
 
         :param bool keepends: Include linebreaks.
         """
-        return [self.__class__(l) for l in self.value_colors.splitlines(keepends)]
+        return [self.__class__(line) for line in self.value_colors.splitlines(keepends)]
 
     def startswith(self, prefix, start=0, end=-1):
         """Return True if string starts with the specified prefix, False otherwise.

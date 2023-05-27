@@ -77,10 +77,19 @@ bandit: .build_history/bandit
 	$(VENV) pylint colorclass --fail-under 10
 	@touch .build_history/pylint
 
+.PHONY: ruff
+.build_history/ruff: .build_history .build_history/isort .build_history/black $(FILES)
+	@echo "Linting with ruff"
+	$(VENV) ruff colorclass
+	@touch .build_history/ruff
+
+.PHONY: ruff
+ruff: .build_history/ruff
+
 # for when using -j (jobs, run in parallel)
 .NOTPARALLEL: .build_history/isort .build_history/black
 
-check: test pylint bandit pre-commit
+check: test pylint ruff bandit pre-commit
 
 .PHONY: publish
 publish: check
