@@ -6,13 +6,6 @@ from colorclass.codes import ANSICodeMapping
 from colorclass.parse import RE_SPLIT, parse_input
 from colorclass.search import build_color_index, find_char_color
 
-# pylint: disable=no-member
-
-
-# Bad name but it is public.
-# pylint: disable=invalid-name
-PARENT_CLASS = type("")
-
 
 def apply_text(incoming: str, func: Callable[[str], str]) -> str:
     """Call `func` on text portions of incoming color string.
@@ -55,7 +48,7 @@ class ColorBytes(bytes):
         return original_class(super(ColorBytes, self).decode(encoding, errors))
 
 
-class ColorStr(PARENT_CLASS):
+class ColorStr(str):
     """Core color class."""
 
     def __new__(cls, *args, **kwargs) -> None:
@@ -63,7 +56,7 @@ class ColorStr(PARENT_CLASS):
         keep_tags = kwargs.pop("keep_tags", False)
 
         # Parse string.
-        value_markup = args[0] if args else PARENT_CLASS()  # e.g. '{red}test{/red}'
+        value_markup = args[0] if args else str()  # e.g. '{red}test{/red}'
         value_colors, value_no_colors = parse_input(
             value_markup, ANSICodeMapping.DISABLE_COLORS, keep_tags
         )
@@ -71,7 +64,7 @@ class ColorStr(PARENT_CLASS):
 
         # Instantiate.
         color_args = [cls, value_colors] + list(args[1:])
-        instance = PARENT_CLASS.__new__(*color_args, **kwargs)
+        instance = str.__new__(*color_args, **kwargs)
 
         # Add additional attributes and return.
         instance.value_colors = value_colors
@@ -104,13 +97,13 @@ class ColorStr(PARENT_CLASS):
         return self.value_no_colors.__len__()
 
     def __mod__(
-        self, other: Optional[Union["ColorStr", str]]
+            self, other: Optional[Union["ColorStr", str]]
     ) -> Optional[Union["ColorStr", str]]:
         """String substitution (like printf)."""
         return self.__class__(self.value_colors % other, keep_tags=True)
 
     def __mul__(
-        self, other: Optional[Union["ColorStr", str]]
+            self, other: Optional[Union["ColorStr", str]]
     ) -> Optional[Union["ColorStr", str]]:
         """Multiply string."""
         return self.__class__(self.value_colors * other, keep_tags=True)
@@ -126,7 +119,7 @@ class ColorStr(PARENT_CLASS):
         return apply_text(self, lambda s: s.capitalize())
 
     def center(
-        self, width: int, fillchar: Optional[str] = None
+            self, width: int, fillchar: Optional[str] = None
     ) -> Optional[Union["ColorStr", str]]:
         """Return centered in a string of length width. Padding is done using the specified fill character or space.
 
@@ -166,7 +159,7 @@ class ColorStr(PARENT_CLASS):
         return self.value_no_colors.endswith(*args)
 
     def encode(
-        self, encoding: Optional[str] = None, errors: str = "strict"
+            self, encoding: Optional[str] = None, errors: str = "strict"
     ) -> ColorBytes:
         """Encode using the codec registered for encoding. encoding defaults to the default encoding.
 
@@ -183,7 +176,7 @@ class ColorStr(PARENT_CLASS):
         )
 
     def decode(
-        self, encoding: Optional[str] = None, errors: str = "strict"
+            self, encoding: Optional[str] = None, errors: str = "strict"
     ) -> Optional[Union["ColorStr", str]]:
         """Decode using the codec registered for encoding. encoding defaults to the default encoding.
 
@@ -199,7 +192,7 @@ class ColorStr(PARENT_CLASS):
         )
 
     def find(
-        self, sub: str, start: Optional[int] = None, end: Optional[int] = None
+            self, sub: str, start: Optional[int] = None, end: Optional[int] = None
     ) -> int:
         """Return the lowest index where substring sub is found, such that sub is contained within string[start:end].
 
@@ -221,7 +214,7 @@ class ColorStr(PARENT_CLASS):
         )
 
     def index(
-        self, sub: str, start: Optional[int] = None, end: Optional[int] = None
+            self, sub: str, start: Optional[int] = None, end: Optional[int] = None
     ) -> int:
         """Like S.find() but raise ValueError when the substring is not found.
 
@@ -275,7 +268,7 @@ class ColorStr(PARENT_CLASS):
         return self.__class__(super(ColorStr, self).join(iterable), keep_tags=True)
 
     def ljust(
-        self, width: int, fillchar: Optional[str] = None
+            self, width: int, fillchar: Optional[str] = None
     ) -> Optional[Union["ColorStr", str]]:
         """Return left-justified string of length width. Padding is done using the specified fill character or space.
 
@@ -291,7 +284,7 @@ class ColorStr(PARENT_CLASS):
         )
 
     def rfind(
-        self, sub: str, start: Optional[int] = None, end: Optional[int] = None
+            self, sub: str, start: Optional[int] = None, end: Optional[int] = None
     ) -> int:
         """Return the highest index where substring sub is found, such that sub is contained within string[start:end].
 
@@ -304,7 +297,7 @@ class ColorStr(PARENT_CLASS):
         return self.value_no_colors.rfind(sub, start, end)
 
     def rindex(
-        self, sub: str, start: Optional[int] = None, end: Optional[int] = None
+            self, sub: str, start: Optional[int] = None, end: Optional[int] = None
     ) -> int:
         """Like .rfind() but raise ValueError when the substring is not found.
 
@@ -315,7 +308,7 @@ class ColorStr(PARENT_CLASS):
         return self.value_no_colors.rindex(sub, start, end)
 
     def rjust(
-        self, width: int, fillchar: Optional[str] = None
+            self, width: int, fillchar: Optional[str] = None
     ) -> Optional[Union["ColorStr", str]]:
         """Return right-justified string of length width. Padding is done using the specified fill character or space.
 
@@ -331,7 +324,7 @@ class ColorStr(PARENT_CLASS):
         )
 
     def splitlines(
-        self, keepends: bool = False
+            self, keepends: bool = False
     ) -> List[Optional[Union["ColorStr", str]]]:
         """Return a list of the lines in the string, breaking at line boundaries.
 
@@ -341,7 +334,7 @@ class ColorStr(PARENT_CLASS):
         """
         return [self.__class__(line) for line in self.value_colors.splitlines(keepends)]
 
-    def startswith(self, prefix, start=0, end=-1):
+    def startswith(self, prefix: str, start: int = 0, end: int = -1) -> bool:
         """Return True if string starts with the specified prefix, False otherwise.
 
         With optional start, test beginning at that position. With optional end, stop comparing at that position. prefix
@@ -392,3 +385,7 @@ class ColorStr(PARENT_CLASS):
                 self.value_no_colors, self.value_no_colors.zfill(width)
             )
         return self.__class__(result, keep_tags=True)
+
+
+if __name__ == '__main__':
+    print(str.__new__(str, "abc"))
