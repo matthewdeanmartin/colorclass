@@ -5,7 +5,7 @@ FILES := $(wildcard **/*.py)
 
 # if you wrap everything in pipenv run, it runs slower.
 ifeq ($(origin VIRTUAL_ENV),undefined)
-    VENV := pipenv run
+    VENV := poetry run
 else
     VENV :=
 endif
