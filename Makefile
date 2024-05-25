@@ -94,6 +94,10 @@ check: test pylint ruff bandit pre-commit
 publish: check
 	rm -rf dist && poetry build
 
+.PHONY: build
+build: check
+	rm -rf dist && poetry build
+
 .PHONY: mypy
 mypy:
 	$(VENV) mypy colorclass --ignore-missing-imports --check-untyped-defs

@@ -8,10 +8,10 @@ this can be done automatically if you call ``Windows.enable(auto_colors=True)``.
 support ANSI color codes natively, you still need to run Windows.enable() to take advantage of automatically detecting
 the console's background color.
 
-In Python2.x this library subclasses ``unicode``, while on Python3.x it subclasses ``str``.
+This library subclasses Python3.x it subclasses ``str``.
 
-* Python 2.6, 2.7, PyPy, PyPy3, 3.3, 3.4, and 3.5 supported on Linux and OS X.
-* Python 2.6, 2.7, 3.3, 3.4, and 3.5 supported on Windows (both 32 and 64 bit versions of Python).
+* Python 3.8+ supported on Linux and OS X.
+* Python 3.8+ supported on Windows (both 32 and 64 bit versions of Python).
 
 ## Quickstart
 Install:
