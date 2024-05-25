@@ -1,6 +1,7 @@
 """Parse color markup tags into ANSI escape sequences."""
 
 import re
+from typing import Tuple
 
 from colorclass.codes import BASE_CODES, ANSICodeMapping
 
@@ -34,7 +35,7 @@ RE_COMBINE = re.compile(r"\033\[([\d;]+)m\033\[([\d;]+)m")
 RE_SPLIT = re.compile(r"(\033\[[\d;]+m)")
 
 
-def prune_overridden(ansi_string):
+def prune_overridden(ansi_string: str) -> str:
     """Remove color codes that are rendered ineffective by subsequent codes in one escape sequence then sort codes.
 
     :param str ansi_string: Incoming ansi_string with ANSI color codes.
@@ -68,7 +69,9 @@ def prune_overridden(ansi_string):
     return ansi_string
 
 
-def parse_input(tagged_string, disable_colors, keep_tags):
+def parse_input(
+    tagged_string: str, disable_colors: bool, keep_tags: bool
+) -> Tuple[str, str]:
     """Perform the actual conversion of tags to ANSI escaped codes.
 
     Provides a version of the input without any colors for len() and other methods.

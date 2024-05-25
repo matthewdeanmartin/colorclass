@@ -3,6 +3,14 @@ Changelog
 
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
+3.0.0 - 2024-05-25
+------------------
+
+Changed
+    * End support for 2.7, increment major version number.
+    * Verified support of 3.12, 3.13
+    * Adding type annotations (3.x style)
+
 2.2.2 - 2023-05-23
 ------------------
 

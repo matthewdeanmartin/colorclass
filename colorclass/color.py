@@ -14,7 +14,7 @@ class Color(ColorStr):
     """
 
     @classmethod
-    def colorize(cls, color, string, auto=False):
+    def colorize(cls, color: str, string: str, auto=False) -> "Color":
         """Color-code entire string using specified color.
 
         :param str color: Color of string.
@@ -28,7 +28,7 @@ class Color(ColorStr):
         return cls("{%s}%s{/%s}" % (tag, string, tag))
 
     @classmethod
-    def black(cls, string, auto=False):
+    def black(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.
@@ -40,7 +40,7 @@ class Color(ColorStr):
         return cls.colorize("black", string, auto=auto)
 
     @classmethod
-    def bgblack(cls, string, auto=False):
+    def bgblack(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.
@@ -52,7 +52,7 @@ class Color(ColorStr):
         return cls.colorize("bgblack", string, auto=auto)
 
     @classmethod
-    def red(cls, string, auto=False):
+    def red(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.
@@ -64,7 +64,7 @@ class Color(ColorStr):
         return cls.colorize("red", string, auto=auto)
 
     @classmethod
-    def bgred(cls, string, auto=False):
+    def bgred(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.
@@ -76,7 +76,7 @@ class Color(ColorStr):
         return cls.colorize("bgred", string, auto=auto)
 
     @classmethod
-    def green(cls, string, auto=False):
+    def green(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.
@@ -88,7 +88,7 @@ class Color(ColorStr):
         return cls.colorize("green", string, auto=auto)
 
     @classmethod
-    def bggreen(cls, string, auto=False):
+    def bggreen(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.
@@ -100,7 +100,7 @@ class Color(ColorStr):
         return cls.colorize("bggreen", string, auto=auto)
 
     @classmethod
-    def yellow(cls, string, auto=False):
+    def yellow(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.
@@ -112,7 +112,7 @@ class Color(ColorStr):
         return cls.colorize("yellow", string, auto=auto)
 
     @classmethod
-    def bgyellow(cls, string, auto=False):
+    def bgyellow(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.
@@ -124,7 +124,7 @@ class Color(ColorStr):
         return cls.colorize("bgyellow", string, auto=auto)
 
     @classmethod
-    def blue(cls, string, auto=False):
+    def blue(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.
@@ -136,7 +136,7 @@ class Color(ColorStr):
         return cls.colorize("blue", string, auto=auto)
 
     @classmethod
-    def bgblue(cls, string, auto=False):
+    def bgblue(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.
@@ -148,7 +148,7 @@ class Color(ColorStr):
         return cls.colorize("bgblue", string, auto=auto)
 
     @classmethod
-    def magenta(cls, string, auto=False):
+    def magenta(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.
@@ -160,7 +160,7 @@ class Color(ColorStr):
         return cls.colorize("magenta", string, auto=auto)
 
     @classmethod
-    def bgmagenta(cls, string, auto=False):
+    def bgmagenta(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.
@@ -172,7 +172,7 @@ class Color(ColorStr):
         return cls.colorize("bgmagenta", string, auto=auto)
 
     @classmethod
-    def cyan(cls, string, auto=False):
+    def cyan(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.
@@ -184,7 +184,7 @@ class Color(ColorStr):
         return cls.colorize("cyan", string, auto=auto)
 
     @classmethod
-    def bgcyan(cls, string, auto=False):
+    def bgcyan(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.
@@ -196,7 +196,7 @@ class Color(ColorStr):
         return cls.colorize("bgcyan", string, auto=auto)
 
     @classmethod
-    def white(cls, string, auto=False):
+    def white(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.
@@ -208,7 +208,7 @@ class Color(ColorStr):
         return cls.colorize("white", string, auto=auto)
 
     @classmethod
-    def bgwhite(cls, string, auto=False):
+    def bgwhite(cls, string: str, auto: bool = False) -> "Color":
         """Color-code entire string.
 
         :param str string: String to colorize.

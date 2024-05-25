@@ -6,6 +6,7 @@ import atexit
 import ctypes
 import re
 import sys
+from typing import Tuple, Any
 
 from colorclass.codes import BASE_CODES, ANSICodeMapping
 from colorclass.core import RE_SPLIT
@@ -119,7 +120,7 @@ class ConsoleScreenBufferInfo(ctypes.Structure):
     ]
 
 
-def init_kernel32(kernel32=None):
+def init_kernel32(kernel32=None) -> Tuple[Any, int, int]:
     """Load a unique instance of WinDLL into memory, set arg/return types, and get stdout/err handles.
 
     1. Since we are setting DLL function argument types and return types, we need to maintain our own instance of
@@ -160,7 +161,7 @@ def init_kernel32(kernel32=None):
     return kernel32, stderr, stdout
 
 
-def get_console_info(kernel32, handle):
+def get_console_info(kernel32, handle: int) -> Tuple[int, int, int]:
     """Get information about this current console window.
 
     http://msdn.microsoft.com/en-us/library/windows/desktop/ms683231
@@ -200,7 +201,7 @@ def get_console_info(kernel32, handle):
     return fg_color, bg_color, native_ansi
 
 
-def bg_color_native_ansi(kernel32, stderr, stdout):
+def bg_color_native_ansi(kernel32, stderr: int, stdout: int) -> Tuple[int, int]:
     """Get background color and if console supports ANSI colors natively for both streams.
 
     :param ctypes.windll.kernel32 kernel32: Loaded kernel32 instance.
@@ -252,7 +253,7 @@ class WindowsStream:
         (v, WINDOWS_CODES[k]) for k, v in BASE_CODES.items() if k in WINDOWS_CODES
     )
 
-    def __init__(self, kernel32, stream_handle, original_stream):
+    def __init__(self, kernel32, stream_handle: int, original_stream) -> None:
         """Constructor.
 
         :param ctypes.windll.kernel32 kernel32: Loaded kernel32 instance.
@@ -272,7 +273,7 @@ class WindowsStream:
         return getattr(self._original_stream, item)
 
     @property
-    def colors(self):
+    def colors(self) -> Tuple[int, int]:
         """Return the current foreground and background colors."""
         try:
             return get_console_info(self._kernel32, self._stream_handle)[:2]
@@ -280,7 +281,7 @@ class WindowsStream:
             return WINDOWS_CODES["white"], WINDOWS_CODES["black"]
 
     @colors.setter
-    def colors(self, color_code):
+    def colors(self, color_code: int) -> None:
         """Change the foreground and background colors for subsequently printed characters.
 
         None resets colors to their original values (when class was instantiated).
@@ -323,7 +324,7 @@ class WindowsStream:
         # Set new code.
         self._kernel32.SetConsoleTextAttribute(self._stream_handle, final_color_code)
 
-    def write(self, p_str):
+    def write(self, p_str: str) -> None:
         """Write to stream.
 
         :param str p_str: string to print.
@@ -359,7 +360,7 @@ class Windows:
     """
 
     @classmethod
-    def disable(cls):
+    def disable(cls) -> bool:
         """Restore sys.stderr and sys.stdout to their original objects. Resets colors to their original values.
 
         :return: If streams restored successfully.
@@ -387,14 +388,14 @@ class Windows:
         return changed
 
     @staticmethod
-    def is_enabled():
+    def is_enabled() -> bool:
         """Return True if either stderr or stdout has colors enabled."""
         return hasattr(sys.stderr, "_original_stream") or hasattr(
             sys.stdout, "_original_stream"
         )
 
     @classmethod
-    def enable(cls, auto_colors=False, reset_atexit=False):
+    def enable(cls, auto_colors: bool = False, reset_atexit: bool = False) -> bool:
         """Enable color text with print() or sys.stdout.write() (stderr too).
 
         :param bool auto_colors: Automatically selects dark or light colors based on current terminal's background
@@ -441,14 +442,14 @@ class Windows:
 
         return True
 
-    def __init__(self, auto_colors=False):
+    def __init__(self, auto_colors: bool = False) -> None:
         """Constructor."""
         self.auto_colors = auto_colors
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         """Context manager, enables colors on Windows."""
         self.enable(auto_colors=self.auto_colors)
 
-    def __exit__(self, *_):
+    def __exit__(self, *_) -> None:
         """Context manager, disabled colors on Windows."""
         self.disable()

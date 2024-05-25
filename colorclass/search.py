@@ -1,9 +1,10 @@
 """Determine color of characters that may or may not be adjacent to ANSI escape sequences."""
+from typing import Tuple
 
 from colorclass.parse import RE_SPLIT
 
 
-def build_color_index(ansi_string):
+def build_color_index(ansi_string: str) -> Tuple[int, ...]:
     """Build an index between visible characters and a string with invisible color codes.
 
     :param str ansi_string: String with color codes (ANSI escape sequences).
@@ -23,7 +24,7 @@ def build_color_index(ansi_string):
     return tuple(mapping)
 
 
-def find_char_color(ansi_string, pos):
+def find_char_color(ansi_string: str, pos: int) -> str:
     """Determine what color a character is in the string.
 
     :param str ansi_string: String with color codes (ANSI escape sequences).

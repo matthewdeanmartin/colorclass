@@ -1,6 +1,7 @@
 """Handles mapping between color names and ANSI codes and determining auto color codes."""
 
 import sys
+from typing import Iterator, Optional, Union, Dict, List, Tuple
 
 try:
     from collections.abc import Mapping
@@ -8,7 +9,7 @@ except ImportError:
     # pylint: disable=deprecated-class
     from collections import Mapping
 
-BASE_CODES = {
+BASE_CODES: Dict[str, Optional[int]] = {
     "/all": 0,
     "b": 1,
     "f": 2,
@@ -139,14 +140,14 @@ class ANSICodeMapping(Mapping):
     DISABLE_COLORS = False
     LIGHT_BACKGROUND = False
 
-    def __init__(self, value_markup):
+    def __init__(self, value_markup: str) -> None:
         """Constructor.
 
         :param str value_markup: String with {color} tags.
         """
         self.whitelist = [k for k in BASE_CODES if "{" + k + "}" in value_markup]
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: str) -> Optional[int]:
         """Return value for key or None if colors are disabled.
 
         :param str item: Key.
@@ -160,26 +161,26 @@ class ANSICodeMapping(Mapping):
             return None
         return getattr(self, item, BASE_CODES[item])
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         """Iterate dictionary."""
         return iter(self.whitelist)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Dictionary length."""
         return len(self.whitelist)
 
     @classmethod
-    def disable_all_colors(cls):
+    def disable_all_colors(cls) -> None:
         """Disable all colors. Strips any color tags or codes."""
         cls.DISABLE_COLORS = True
 
     @classmethod
-    def enable_all_colors(cls):
+    def enable_all_colors(cls) -> None:
         """Enable all colors. Strips any color tags or codes."""
         cls.DISABLE_COLORS = False
 
     @classmethod
-    def disable_if_no_tty(cls):
+    def disable_if_no_tty(cls) -> bool:
         """Disable all colors only if there is no TTY available.
 
         :return: True if colors are disabled, False if stderr or stdout is a TTY.
@@ -191,116 +192,116 @@ class ANSICodeMapping(Mapping):
         return True
 
     @classmethod
-    def set_dark_background(cls):
+    def set_dark_background(cls) -> None:
         """Choose dark colors for all 'auto'-prefixed codes for readability on light backgrounds."""
         cls.LIGHT_BACKGROUND = False
 
     @classmethod
-    def set_light_background(cls):
+    def set_light_background(cls) -> None:
         """Choose dark colors for all 'auto'-prefixed codes for readability on light backgrounds."""
         cls.LIGHT_BACKGROUND = True
 
     @property
-    def autoblack(self):
+    def autoblack(self) -> Optional[int]:
         """Return automatic black foreground color depending on background color."""
         return BASE_CODES["black" if ANSICodeMapping.LIGHT_BACKGROUND else "hiblack"]
 
     @property
-    def autored(self):
+    def autored(self) -> Optional[int]:
         """Return automatic red foreground color depending on background color."""
         return BASE_CODES["red" if ANSICodeMapping.LIGHT_BACKGROUND else "hired"]
 
     @property
-    def autogreen(self):
+    def autogreen(self) -> Optional[int]:
         """Return automatic green foreground color depending on background color."""
         return BASE_CODES["green" if ANSICodeMapping.LIGHT_BACKGROUND else "higreen"]
 
     @property
-    def autoyellow(self):
+    def autoyellow(self) -> Optional[int]:
         """Return automatic yellow foreground color depending on background color."""
         return BASE_CODES["yellow" if ANSICodeMapping.LIGHT_BACKGROUND else "hiyellow"]
 
     @property
-    def autoblue(self):
+    def autoblue(self) -> Optional[int]:
         """Return automatic blue foreground color depending on background color."""
         return BASE_CODES["blue" if ANSICodeMapping.LIGHT_BACKGROUND else "hiblue"]
 
     @property
-    def automagenta(self):
+    def automagenta(self) -> Optional[int]:
         """Return automatic magenta foreground color depending on background color."""
         return BASE_CODES[
             "magenta" if ANSICodeMapping.LIGHT_BACKGROUND else "himagenta"
         ]
 
     @property
-    def autocyan(self):
+    def autocyan(self) -> Optional[int]:
         """Return automatic cyan foreground color depending on background color."""
         return BASE_CODES["cyan" if ANSICodeMapping.LIGHT_BACKGROUND else "hicyan"]
 
     @property
-    def autowhite(self):
+    def autowhite(self) -> Optional[int]:
         """Return automatic white foreground color depending on background color."""
         return BASE_CODES["white" if ANSICodeMapping.LIGHT_BACKGROUND else "hiwhite"]
 
     @property
-    def autobgblack(self):
+    def autobgblack(self) -> Optional[int]:
         """Return automatic black background color depending on background color."""
         return BASE_CODES[
             "bgblack" if ANSICodeMapping.LIGHT_BACKGROUND else "hibgblack"
         ]
 
     @property
-    def autobgred(self):
+    def autobgred(self) -> Optional[int]:
         """Return automatic red background color depending on background color."""
         return BASE_CODES["bgred" if ANSICodeMapping.LIGHT_BACKGROUND else "hibgred"]
 
     @property
-    def autobggreen(self):
+    def autobggreen(self) -> Optional[int]:
         """Return automatic green background color depending on background color."""
         return BASE_CODES[
             "bggreen" if ANSICodeMapping.LIGHT_BACKGROUND else "hibggreen"
         ]
 
     @property
-    def autobgyellow(self):
+    def autobgyellow(self) -> Optional[int]:
         """Return automatic yellow background color depending on background color."""
         return BASE_CODES[
             "bgyellow" if ANSICodeMapping.LIGHT_BACKGROUND else "hibgyellow"
         ]
 
     @property
-    def autobgblue(self):
+    def autobgblue(self) -> Optional[int]:
         """Return automatic blue background color depending on background color."""
         return BASE_CODES["bgblue" if ANSICodeMapping.LIGHT_BACKGROUND else "hibgblue"]
 
     @property
-    def autobgmagenta(self):
+    def autobgmagenta(self) -> Optional[int]:
         """Return automatic magenta background color depending on background color."""
         return BASE_CODES[
             "bgmagenta" if ANSICodeMapping.LIGHT_BACKGROUND else "hibgmagenta"
         ]
 
     @property
-    def autobgcyan(self):
+    def autobgcyan(self) -> Optional[int]:
         """Return automatic cyan background color depending on background color."""
         return BASE_CODES["bgcyan" if ANSICodeMapping.LIGHT_BACKGROUND else "hibgcyan"]
 
     @property
-    def autobgwhite(self):
+    def autobgwhite(self) -> Optional[int]:
         """Return automatic white background color depending on background color."""
         return BASE_CODES[
             "bgwhite" if ANSICodeMapping.LIGHT_BACKGROUND else "hibgwhite"
         ]
 
 
-def list_tags():
+def list_tags() -> List[Tuple[Optional[int], str, Optional[int], Optional[int]]]:
     """List the available tags.
 
     :return: List of 4-item tuples: opening tag, closing tag, main ansi value, closing ansi value.
     :rtype: list
     """
     # Build reverse dictionary. Keys are closing tags, values are [closing ansi, opening tag, opening ansi].
-    reverse_dict = {}
+    reverse_dict: Dict[str, List[Union[Optional[int], str]]] = {}
     for tag, ansi in sorted(BASE_CODES.items()):
         if tag.startswith("/"):
             reverse_dict[tag] = [ansi, None, None]
@@ -311,7 +312,7 @@ def list_tags():
     four_item_tuples = [(v[1], k, v[2], v[0]) for k, v in reverse_dict.items()]
 
     # Sort.
-    def sorter(four_item):
+    def sorter(four_item: List[Optional[Union[str, int]]]) -> int:
         """Sort /all /fg /bg first, then b i u flash, then auto colors, then dark colors, finally light colors.
 
         :param iter four_item: [opening tag, closing tag, main ansi value, closing ansi value]
