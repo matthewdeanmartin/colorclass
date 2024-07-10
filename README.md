@@ -1,3 +1,8 @@
+# I have been removed as a collaborator by Robpol86 (not sure why). Since he owns the pypi name, you'll have to take up any requests with him.
+
+---
+
+
 # colorclass
 
 Yet another ANSI color text library for Python. Provides "auto colors" for dark/light terminals. Works on Linux, OS X,
